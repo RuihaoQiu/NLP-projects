@@ -1,0 +1,45 @@
+Data Scientist
+Adobe
+651 Bewertungen
+Lesen Sie, was andere Nutzer über diesen Arbeitgeber sagen.
+München
+Our Company
+Changing the world through digital experiences is what Adobe’s all about. We give everyone—from emerging artists to global brands—everything they need to design and deliver outstanding digital experiences. We’re passionate about empowering people to craft beautiful and powerful images, videos, and apps, and transform how companies interact with customers across every screen.
+
+We’re on a mission to hire the very best and are committed to building exceptional employee experiences where everyone is respected and has access to equal opportunity. We realize that new ideas can come from everywhere in the organization, and we know the next big idea could be yours!
+
+Position Summary
+Experienced Data Scientist with strong development background. You will collaborate with key stakeholders and apply your technical proficiency in machine learning, Python, R and algorithms. You will work across different stages of the development project using data science & technologies to provide solutions and interact directly with enterprise customers for the Adobe Experience Platform.
+
+What you’ll do
+Work with Adobe customers to capture requirements, map solutions & make recommendations
+Document projects with clear business objectives, provide data gathering & data preparation, final algorithm, detailed set of results
+Strong collaboration with software engineer consultants onshore & offshore
+Create reusable statistical models & modify existing algorithms
+Support the execution of Data Science solutions to business problems
+Bill & forecast time toward customer projects
+Innovate new ideas to tackle customer needs & assist to market internally new solutions
+What you need to succeed
+3+ years of experience in Data Science role , with a focus on building data pipelines for conducting data intensive analysis
+3+ years of experience with Machine Learning and alogrithims for classification, clustering & prediction
+3+ years of experience with common Data Science Toolkits (i.e. R, Jupyter Notebooks, PySpark etc.)
+3+ years of enterprise development using Python
+Ability to enhance Standard Algorithms is required
+Knowledge & experience using Amazon Sagemaker , Microsoft Azure ML or Google AI technologies
+3+ years of complex SQL experience
+3+ years of Data Modeling experience
+3+ years of Data Visualization tools (i.e. Tableau, PowerBI etc.)
+Demonstrate exceptional organizational skills and ability to multi-task simultaneous different customer projects
+Strong verbal & written communication skills to lead customers to a successful outcome
+Must be self-managed, proactive and customer focused
+Willingness to travel across EMEA
+Degree in Computer Science, Information Systems or related field
+Special Consideration given for
+Experience & knowledge with Adobe Experience Cloud solutions
+Experience & knowledge with Web Analytics or Digital Marketing
+Experience as an enterprise Data Science or Engineer consultant
+At Adobe, you will be immersed in an exceptional work environment that is recognized throughout the world on Best Companies lists . You will also be surrounded by colleagues who are committed to helping each other grow through our unique Check-In approach where ongoing feedback flows freely.
+
+If you’re looking to make an impact, Adobe's the place for you. Discover what our employees are saying about their career experiences on the Adobe Life blog and explore the meaningful benefits we offer.
+
+Adobe is an equal opportunity employer. We welcome and encourage diversity in the workplace regardless of race, gender, religion, age , sexual orientation, gender identity, disability or veteran status.

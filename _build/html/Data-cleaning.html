@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Data cleaning for NLP &mdash; algorithms  documentation</title>
+  <title>Data cleaning &mdash; algorithms  documentation</title>
   
 
   
@@ -79,7 +79,12 @@
             
             
               <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Data cleaning for NLP</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Data cleaning</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#clean-text-with-regex">Clean text with regex</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#clean-text-with-nltk">Clean text with NLTK</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#text-cleaning-pipeline">Text cleaning pipeline</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="Embedding.html">Embeddings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Feature-engineering.html">Feature engineering</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ML-models.html">Machine learning models</a></li>
@@ -129,7 +134,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Data cleaning for NLP</li>
+      <li>Data cleaning</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -148,8 +153,119 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="data-cleaning-for-nlp">
-<h1>Data cleaning for NLP<a class="headerlink" href="#data-cleaning-for-nlp" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="data-cleaning">
+<h1>Data cleaning<a class="headerlink" href="#data-cleaning" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">string</span>
+<span class="kn">from</span> <span class="nn">nltk.tokenize</span> <span class="k">import</span> <span class="n">word_tokenize</span>
+<span class="kn">from</span> <span class="nn">nltk.corpus</span> <span class="k">import</span> <span class="n">stopwords</span>
+<span class="kn">from</span> <span class="nn">nltk.stem.porter</span> <span class="k">import</span> <span class="n">PorterStemmer</span>
+
+<span class="kn">from</span> <span class="nn">Trie</span> <span class="k">import</span> <span class="n">Trie</span>
+
+<span class="c1">## input an text example - a job post</span>
+<span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;data/text_example.txt&#39;</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;rt&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">handler</span><span class="p">:</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">handler</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+<span class="c1">## stop words and punctuations</span>
+<span class="n">stop_words</span> <span class="o">=</span> <span class="n">stopwords</span><span class="o">.</span><span class="n">words</span><span class="p">(</span><span class="s1">&#39;english&#39;</span><span class="p">)</span>
+<span class="n">punc</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">punctuation</span>
+</pre></div>
+</div>
+<div class="section" id="clean-text-with-regex">
+<h2>Clean text with regex<a class="headerlink" href="#clean-text-with-regex" title="Permalink to this headline">¶</a></h2>
+<p><strong>Clean special patterns</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">clean_special_patterns</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Remove special patterns - email, url, date etc.&quot;&quot;&quot;</span>
+    <span class="n">email_regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[\w.-]+@[\w.-]+&quot;</span><span class="p">)</span>
+    <span class="n">url_regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(http|www)[^\s]+&quot;</span><span class="p">)</span>
+    <span class="n">date_regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[\d]{2,4}[ -/:]*[\d]{2,4}([ -/:]*[\d]{2,4})?&quot;</span><span class="p">)</span> <span class="c1"># a way to match date</span>
+    <span class="c1">## remove</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">url_regex</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">email_regex</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">date_regex</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">text</span>
+
+<span class="n">s</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;Applications:</span>
+<span class="s2">www.aa.frdfaunefehofer.de/defe/referfefenzenefe/afeda-cenfeter.html</span>
+<span class="s2">http://www.ifefis.fe.com</span>
+<span class="s2">email: fowjfoj@fwjofj.djfow</span>
+<span class="s2">Kennziffer: IIS-2020-12-23</span>
+<span class="s2">Bewerbungsfrist:</span>
+<span class="s2">&quot;&quot;&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">clean_special_patterns</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>‘Applications: \n\n\nemail: \nKennziffer: IIS-\nBewerbungsfrist:\n’</p>
+<p><strong>Remove stopwords and punctions</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">make_regex</span><span class="p">(</span><span class="n">input_list</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Build regex from trie structure.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">Trie</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">input_list</span><span class="p">:</span>
+        <span class="n">t</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+    <span class="n">regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\b&quot;</span> <span class="o">+</span> <span class="n">t</span><span class="o">.</span><span class="n">pattern</span><span class="p">()</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;\b&quot;</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">regex</span>
+
+<span class="k">def</span> <span class="nf">clean_stopwords</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">stop_regex</span> <span class="o">=</span> <span class="n">make_regex</span><span class="p">(</span><span class="n">stop_words</span><span class="p">)</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">stop_regex</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">text</span>
+
+<span class="k">def</span> <span class="nf">clean_punct</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">punc_regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;[</span><span class="si">%s</span><span class="s1">]&#39;</span><span class="o">%</span><span class="n">re</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">punctuation</span><span class="p">))</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">punc_regex</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">text</span>
+
+<span class="n">clean_stopword_punct</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>About Trie data structure, <a class="reference external" href="https://algonotes.readthedocs.io/en/latest/Trie.html">check my other post</a>.
+The script Trie.py, which you can find <a class="reference external" href="https://gist.github.com/EricDuminil/8faabc2f3de82b24e5a371b6dc0fd1e0">here</a>.</p>
+</div>
+<div class="section" id="clean-text-with-nltk">
+<h2>Clean text with NLTK<a class="headerlink" href="#clean-text-with-nltk" title="Permalink to this headline">¶</a></h2>
+<p><strong>Tokenize</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tokens</span> <span class="o">=</span> <span class="n">word_tokenize</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Remove punctuations</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">words</span> <span class="o">=</span> <span class="p">[</span><span class="n">word</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">tokens</span> <span class="k">if</span> <span class="n">word</span><span class="o">.</span><span class="n">isalpha</span><span class="p">()]</span>
+</pre></div>
+</div>
+<p><strong>Remove stop words</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">stop_words</span> <span class="o">=</span> <span class="n">stopwords</span><span class="o">.</span><span class="n">words</span><span class="p">(</span><span class="s1">&#39;english&#39;</span><span class="p">)</span>
+<span class="n">words</span> <span class="o">=</span> <span class="p">[</span><span class="n">word</span> <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">words</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">stop_words</span><span class="p">]</span>
+</pre></div>
+</div>
+<p><strong>Stemming</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">porter</span> <span class="o">=</span> <span class="n">PorterStemmer</span><span class="p">()</span>
+<span class="n">stemmed_words</span> <span class="o">=</span> <span class="p">[</span><span class="n">porter</span><span class="o">.</span><span class="n">stem</span><span class="p">(</span><span class="n">word</span><span class="p">)</span> <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">words</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="text-cleaning-pipeline">
+<h2>Text cleaning pipeline<a class="headerlink" href="#text-cleaning-pipeline" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">clean_text</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;clean text by</span>
+<span class="sd">    clean_special_patterns: email, date, url, etc.</span>
+<span class="sd">    remove punctions, stop words</span>
+<span class="sd">    stem words</span>
+
+<span class="sd">    output</span>
+<span class="sd">    --------</span>
+<span class="sd">    list: stemmed words</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">clean_special_patterns</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="n">tokens</span> <span class="o">=</span> <span class="n">word_tokenize</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="n">words</span> <span class="o">=</span> <span class="p">[</span><span class="n">word</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">tokens</span> <span class="k">if</span> <span class="n">word</span><span class="o">.</span><span class="n">isalpha</span><span class="p">()]</span>
+    <span class="n">words</span> <span class="o">=</span> <span class="p">[</span><span class="n">word</span> <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">words</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">stop_words</span><span class="p">]</span>
+    <span class="n">stemmed_words</span> <span class="o">=</span> <span class="p">[</span><span class="n">porter</span><span class="o">.</span><span class="n">stem</span><span class="p">(</span><span class="n">word</span><span class="p">)</span> <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">words</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">stemmed_words</span>
+</pre></div>
+</div>
+</div>
 </div>
 
 
