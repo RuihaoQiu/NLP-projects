@@ -27,9 +27,9 @@ print(X.shape)
 (269, 1312)
 
 ### Tfidf vectorizer
-tf * idf<\b>  
-tf - term frequency, word count in a document.<\b>  
-idf - inverse document frequency, total number of documents / number of documents contain the word.<\b>  
+tf * idf</b>  
+tf - term frequency, word count in a document.</b>  
+idf - inverse document frequency, total number of documents / number of documents contain the word.</b>  
 
 The main idea is to lower the weight/importance of the words that appear in many documents.
 ```
@@ -41,3 +41,18 @@ vectorizer = TfidfVectorizer(
 X = vectorizer.fit_transform(corpus)
 ```
 It will be the same size as 2-gram vectorization, the values are from 0-1, normalized by L2.
+
+### Customized vectorizer
+```
+vocab = ["python", "machine learning", "pandas", "pyspark", "sql"]
+vectorizer = TfidfVectorizer(
+    stop_words="english",
+    ngram_range=(1,2),
+    sublinear_tf=True,
+    vocabulary = vocab
+)
+X = vectorizer.fit_transform(corpus)
+print(X.shape)
+```
+(269, 5)</b>  
+The documents are only embedded on customized features.

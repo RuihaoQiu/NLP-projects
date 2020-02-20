@@ -29,7 +29,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Feature engineering" href="Feature-engineering.html" />
-    <link rel="prev" title="Data cleaning for NLP" href="Data-cleaning.html" /> 
+    <link rel="prev" title="Data cleaning" href="Data-cleaning.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -79,8 +79,14 @@
             
             
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="Data-cleaning.html">Data cleaning for NLP</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Embeddings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Data-cleaning.html">Data cleaning</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Embeddings</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#bag-of-words">Bag of words</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#n-gram-vectorizer">N-gram vectorizer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tfidf-vectorizer">Tfidf vectorizer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#customized-vectorizer">Customized vectorizer</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="Feature-engineering.html">Feature engineering</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ML-models.html">Machine learning models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Recommender-systems.html">Recommender systems in NLP</a></li>
@@ -151,6 +157,61 @@
   <div class="section" id="embeddings">
 <h1>Embeddings<a class="headerlink" href="#embeddings" title="Permalink to this headline">¶</a></h1>
 <p>The most important part of machine learning in NLP.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">sklearn.feature_extraction.text</span> <span class="k">import</span> <span class="n">CountVectorizer</span><span class="p">,</span> <span class="n">TfidfVectorizer</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="s2">&quot;data/sample.xlsx&quot;</span><span class="p">)</span>
+<span class="n">corpus</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">values</span>
+</pre></div>
+</div>
+<div class="section" id="bag-of-words">
+<h2>Bag of words<a class="headerlink" href="#bag-of-words" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">vectorizer</span> <span class="o">=</span> <span class="n">CountVectorizer</span><span class="p">(</span><span class="n">stop_words</span><span class="o">=</span><span class="s2">&quot;english&quot;</span><span class="p">)</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">vectorizer</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">corpus</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>(269, 466)
+The corpus contains 269 documents, 466 unique words.</p>
+</div>
+<div class="section" id="n-gram-vectorizer">
+<h2>N-gram vectorizer<a class="headerlink" href="#n-gram-vectorizer" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">vectorizer</span> <span class="o">=</span> <span class="n">CountVectorizer</span><span class="p">(</span><span class="n">stop_words</span><span class="o">=</span><span class="s2">&quot;english&quot;</span><span class="p">,</span> <span class="n">ngram_range</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">vectorizer</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">corpus</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>(269, 1312)</p>
+</div>
+<div class="section" id="tfidf-vectorizer">
+<h2>Tfidf vectorizer<a class="headerlink" href="#tfidf-vectorizer" title="Permalink to this headline">¶</a></h2>
+<p>tf * idf</b><br />tf - term frequency, word count in a document.</b><br />idf - inverse document frequency, total number of documents / number of documents contain the word.</b></p>
+<p>The main idea is to lower the weight/importance of the words that appear in many documents.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">vectorizer</span> <span class="o">=</span> <span class="n">TfidfVectorizer</span><span class="p">(</span>
+    <span class="n">stop_words</span><span class="o">=</span><span class="s2">&quot;english&quot;</span><span class="p">,</span>
+    <span class="n">ngram_range</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span>
+    <span class="n">sublinear_tf</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">vectorizer</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">corpus</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>It will be the same size as 2-gram vectorization, the values are from 0-1, normalized by L2.</p>
+</div>
+<div class="section" id="customized-vectorizer">
+<h2>Customized vectorizer<a class="headerlink" href="#customized-vectorizer" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">vocab</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;python&quot;</span><span class="p">,</span> <span class="s2">&quot;machine learning&quot;</span><span class="p">,</span> <span class="s2">&quot;pandas&quot;</span><span class="p">,</span> <span class="s2">&quot;pyspark&quot;</span><span class="p">,</span> <span class="s2">&quot;sql&quot;</span><span class="p">]</span>
+<span class="n">vectorizer</span> <span class="o">=</span> <span class="n">TfidfVectorizer</span><span class="p">(</span>
+    <span class="n">stop_words</span><span class="o">=</span><span class="s2">&quot;english&quot;</span><span class="p">,</span>
+    <span class="n">ngram_range</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span>
+    <span class="n">sublinear_tf</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">vocabulary</span> <span class="o">=</span> <span class="n">vocab</span>
+<span class="p">)</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">vectorizer</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">corpus</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>(269, 5)</b><br />The documents are only embedded on customized features.</p>
+</div>
 </div>
 
 
@@ -164,7 +225,7 @@
         <a href="Feature-engineering.html" class="btn btn-neutral float-right" title="Feature engineering" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="Data-cleaning.html" class="btn btn-neutral" title="Data cleaning for NLP" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="Data-cleaning.html" class="btn btn-neutral" title="Data cleaning" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
