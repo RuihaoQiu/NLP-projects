@@ -82,7 +82,8 @@
 <li class="toctree-l1"><a class="reference internal" href="Data-cleaning.html">Data cleaning</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Text-vectorization.html">Text vectorization</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Feature engineering</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#dimension-reductions">Dimension reductions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#dimension-reduction">Dimension reduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#feature-extraction">Feature extraction</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="Embeddings.html">Embeddings</a></li>
@@ -154,16 +155,51 @@
             
   <div class="section" id="feature-engineering">
 <h1>Feature engineering<a class="headerlink" href="#feature-engineering" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="dimension-reductions">
-<h2>Dimension reductions<a class="headerlink" href="#dimension-reductions" title="Permalink to this headline">¶</a></h2>
-<p><strong>PCA</strong></p>
-<p><strong>LDA</strong></p>
-<p><strong>SVD</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">sklearn.feature_extraction.text</span> <span class="k">import</span> <span class="n">CountVectorizer</span>
+<span class="kn">from</span> <span class="nn">sklearn.decomposition</span> <span class="k">import</span> <span class="n">TruncatedSVD</span><span class="p">,</span> <span class="n">SparsePCA</span>
+
+<span class="c1">## make count vectors</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="s2">&quot;data/sample.xlsx&quot;</span><span class="p">)</span>
+<span class="n">samples</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">values</span>
+<span class="n">vectorizer</span> <span class="o">=</span> <span class="n">CountVectorizer</span><span class="p">(</span><span class="n">stop_words</span><span class="o">=</span><span class="s2">&quot;english&quot;</span><span class="p">,</span> <span class="n">ngram_range</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">vectorizer</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span>
+<span class="n">X</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+</div>
+<p>(269, 1312)</p>
+<div class="section" id="dimension-reduction">
+<h2>Dimension reduction<a class="headerlink" href="#dimension-reduction" title="Permalink to this headline">¶</a></h2>
+<p><strong>SVD</strong>
+In particular, truncated SVD works on term count/tf-idf matrices as returned by the vectorizers in sklearn.feature_extraction.text. In that context, it is known as latent semantic analysis (LSA). It can work with scipy.sparse matrices efficiently. <a class="reference external" href="https://nlp.stanford.edu/IR-book/pdf/18lsi.pdf">Check the mathematical details here</a>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">svd</span> <span class="o">=</span> <span class="n">TruncatedSVD</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">n_iter</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">X_tran</span> <span class="o">=</span> <span class="n">svd</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">X_tran</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>(269, 100)</p>
+<p><strong>PCA</strong>
+Using PCA for dimensionality reduction is to remove some of the smallest principal components, resulting in a lower-dimensional projection of the data that preserves the maximal data variance. <code class="docutils literal notranslate"><span class="pre">sklearn.PCA</span></code> does not support sparse input, here we use svd combined with sparse_pca instead.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">spca</span> <span class="o">=</span> <span class="n">SparsePCA</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">X_svd</span> <span class="o">=</span> <span class="n">svd</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="n">X_tran</span> <span class="o">=</span> <span class="n">spca</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_svd</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">X_tran</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>(269, 10)</p>
+</div>
+<div class="section" id="feature-extraction">
+<h2>Feature extraction<a class="headerlink" href="#feature-extraction" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><strong>text-based features</strong>: Number of total/average words, total characters, stopwords, punctuations, UPPER case words, Title case words, unique words, sentences, …</p></li>
+<li><p><strong>NLP-based features</strong>: Number of different words: Nouns, Pronouns, Verbs, Adverbs, Adjectives.</p></li>
+<li><p><strong>NER-based features</strong>: Number of cities/countries/skills/names/company names/…</p></li>
+</ul>
 <p><strong>Reference</strong></p>
 <ul class="simple">
-<li><p>Word2vec explanation - <a class="reference external" href="http://mccormickml.com/2016/04/19/word2vec-tutorial-the-skip-gram-model/">http://mccormickml.com/2016/04/19/word2vec-tutorial-the-skip-gram-model/</a></p></li>
-<li><p>gensim - <a class="reference external" href="https://radimrehurek.com/gensim/models/word2vec.html">https://radimrehurek.com/gensim/models/word2vec.html</a></p></li>
 <li><p>Dimension reduction - <a class="reference external" href="https://thenewstack.io/3-new-techniques-for-data-dimensionality-reduction-in-machine-learning/">https://thenewstack.io/3-new-techniques-for-data-dimensionality-reduction-in-machine-learning/</a></p></li>
+<li><p>Scikitlearn - <a class="reference external" href="https://scikit-learn.org/stable/modules/decomposition.html#principal-component-analysis-pca">https://scikit-learn.org/stable/modules/decomposition.html#principal-component-analysis-pca</a></p></li>
+<li><p>NER (Named Entity Recognition) - <a class="reference external" href="http://www.nltk.org/api/nltk.tag.html#module-nltk.tag.stanford">http://www.nltk.org/api/nltk.tag.html#module-nltk.tag.stanford</a></p></li>
 </ul>
 </div>
 </div>

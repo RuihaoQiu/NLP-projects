@@ -87,3 +87,7 @@ model.train(documents,
             total_examples=model.corpus_count,
             epochs=model.epochs)
 ```
+
+**Reference**
+- Word2Vec explanation - [http://mccormickml.com/2016/04/19/word2vec-tutorial-the-skip-gram-model/](http://mccormickml.com/2016/04/19/word2vec-tutorial-the-skip-gram-model/)
+- gensim - [https://radimrehurek.com/gensim/models/word2vec.html](https://radimrehurek.com/gensim/models/word2vec.html)
