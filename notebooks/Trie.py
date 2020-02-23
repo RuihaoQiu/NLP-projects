@@ -62,3 +62,12 @@ class Trie:
 
     def pattern(self):
         return self._pattern(self.dump())
+
+def make_regex(input_list):
+    """Build regex from trie structure.
+    """
+    t = Trie()
+    for w in input_list:
+        t.add(w)
+    regex = re.compile(r"\b" + t.pattern() + r"\b", re.IGNORECASE)
+    return regex

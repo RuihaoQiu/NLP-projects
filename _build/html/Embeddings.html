@@ -1,0 +1,305 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Embeddings &mdash; Machine learning in NLP  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Machine learning models" href="ML-models.html" />
+    <link rel="prev" title="Feature engineering" href="Feature-engineering.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Machine learning in NLP
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Data-cleaning.html">Data cleaning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Text-vectorization.html">Text vectorization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Feature-engineering.html">Feature engineering</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Embeddings</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#word-embedding">Word embedding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#document-embedding">Document embedding</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ML-models.html">Machine learning models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Recommender-systems.html">Recommender systems in NLP</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Machine learning in NLP</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Embeddings</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/Embeddings.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="embeddings">
+<h1>Embeddings<a class="headerlink" href="#embeddings" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">nltk.tokenize</span> <span class="k">import</span> <span class="n">word_tokenize</span>
+<span class="kn">from</span> <span class="nn">gensim.models</span> <span class="k">import</span> <span class="n">Word2Vec</span>
+<span class="kn">from</span> <span class="nn">gensim.models.doc2vec</span> <span class="k">import</span> <span class="n">Doc2Vec</span><span class="p">,</span> <span class="n">TaggedDocument</span>
+<span class="kn">from</span> <span class="nn">TextCleaner</span> <span class="k">import</span> <span class="n">clean_text</span>
+
+<span class="c1">## data source - https://www.kaggle.com/bman93/dataset/data#</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;data/Top30.csv&quot;</span><span class="p">)</span>
+<span class="n">docs</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">Description</span>
+<span class="nb">len</span><span class="p">(</span><span class="n">docs</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>72292</p>
+<div class="section" id="word-embedding">
+<h2>Word embedding<a class="headerlink" href="#word-embedding" title="Permalink to this headline">¶</a></h2>
+<p><strong>Word2Vec</strong></p>
+<p>clean and tokenize data</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">%%</span><span class="n">time</span>
+<span class="n">tokenss</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">docs</span><span class="p">:</span>
+    <span class="n">tokenss</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">clean_text</span><span class="p">(</span><span class="n">doc</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Wall time: 2min 30s, processed ~70k docs.
+To generate good work vectors, I would suggest at least 1m jobs. This preprocess will take ~30 mins. If even more data, parallel by PySpark is necessary, see my <a class="reference external" href="https://pynotes.readthedocs.io/en/latest/pyspark.html">pyspark notes</a>.</p>
+<p>Train model</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">%%</span><span class="n">time</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">Word2Vec</span><span class="p">(</span>
+    <span class="n">tokenss</span><span class="p">,</span>     <span class="c1"># list of tokens</span>
+    <span class="n">size</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>    <span class="c1"># vector length</span>
+    <span class="n">window</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>    <span class="c1"># maximum distance between the current and predicted word</span>
+    <span class="n">min_count</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="c1"># ignores words with frequency lower than 5</span>
+    <span class="n">workers</span><span class="o">=</span><span class="mi">4</span>    <span class="c1"># number of threads</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Wall time: 1min 55s</p>
+<p>Check results</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">test_list</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;python&quot;</span><span class="p">,</span> <span class="s2">&quot;javascript&quot;</span><span class="p">,</span> <span class="s2">&quot;powerbi&quot;</span><span class="p">,</span> <span class="s2">&quot;excel&quot;</span><span class="p">,</span> <span class="s2">&quot;git&quot;</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">test_list</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">word</span><span class="p">,</span> <span class="s2">&quot;:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">wv</span><span class="o">.</span><span class="n">most_similar</span><span class="p">(</span><span class="n">word</span><span class="p">,</span> <span class="n">topn</span><span class="o">=</span><span class="mi">5</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>python :
+[(‘rdbms’, 0.8215682506561279), (‘perl’, 0.8211899399757385), (‘tomcat’, 0.8167069554328918), (‘weblogic’, 0.8105891942977905), (‘jms’, 0.8051434755325317)] </b><br />javascript :
+[(‘struts’, 0.8272807002067566), (‘xml’, 0.8139920234680176), (‘jquery’, 0.8123090863227844), (‘html’, 0.8114718198776245), (‘xslt’, 0.794143795967102)]</b><br />powerbi :
+[(‘obiee’, 0.6827813982963562), (‘tableau’, 0.6598259210586548), (‘visualization’, 0.6336531639099121), (‘query’, 0.6239848136901855), (‘iri’, 0.6232795119285583)]</b><br />excel :
+[(‘ms’, 0.666321873664856), (‘powerpoint’, 0.6542035341262817), (‘macros’, 0.6245964765548706), (‘vlookups’, 0.6167137622833252), (‘microsoft’, 0.6154444217681885)]</b><br />git :
+[(‘svn’, 0.7295184135437012), (‘weblogic’, 0.6927921772003174), (‘tomcat’, 0.6880820989608765), (‘subversion’, 0.6861574053764343), (‘jms’, 0.6797549724578857)]</p>
+</div>
+<div class="section" id="document-embedding">
+<h2>Document embedding<a class="headerlink" href="#document-embedding" title="Permalink to this headline">¶</a></h2>
+<p><strong>Doc2Vec</strong></p>
+<p>make tagged documents</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">documents</span> <span class="o">=</span> <span class="p">[</span><span class="n">TaggedDocument</span><span class="p">(</span><span class="n">tokens</span><span class="p">,</span> <span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">tokens</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tokenss</span><span class="p">)]</span>
+</pre></div>
+</div>
+<p>initialize the model, similar as word2vec</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">Doc2Vec</span><span class="p">(</span>
+  <span class="n">vector_size</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
+  <span class="n">window</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+  <span class="n">min_count</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+  <span class="n">workers</span><span class="o">=</span><span class="mi">4</span>
+  <span class="p">)</span>
+</pre></div>
+</div>
+<p>build vocabulary</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">build_vocab</span><span class="p">(</span><span class="n">documents</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>train the model</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">documents</span><span class="p">,</span>
+            <span class="n">total_examples</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">corpus_count</span><span class="p">,</span>
+            <span class="n">epochs</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">epochs</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="ML-models.html" class="btn btn-neutral float-right" title="Machine learning models" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Feature-engineering.html" class="btn btn-neutral" title="Feature engineering" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Ruihao Qiu.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/language_data.js"></script>
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -18,7 +18,7 @@ import sphinx_rtd_theme
 
 # -- Project information -----------------------------------------------------
 
-project = 'algorithms'
+project = 'Machine learning in NLP'
 copyright = '2020, Ruihao Qiu'
 author = 'Ruihao Qiu'
 

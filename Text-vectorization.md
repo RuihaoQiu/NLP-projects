@@ -1,5 +1,5 @@
-## Embeddings
-The most important part of machine learning in NLP.
+## Text vectorization
+How to vectorize the documents.
 
 ```
 import pandas as pd
@@ -55,4 +55,6 @@ X = vectorizer.fit_transform(corpus)
 print(X.shape)
 ```
 (269, 5)</b>  
-The documents are only embedded on customized features.
+The documents are only embedded on customized features. An interesting use case, if the features are skills, the values indicate the **importance** of skills in each documents. We can use it to recommend top skills for each documents.
+
+There are other techniques to vectorize the document, I will discuss them in embedding section.

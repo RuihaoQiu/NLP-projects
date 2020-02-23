@@ -7,7 +7,8 @@ This document contains the practical use cases in my daily NLP projects.
    :glob:
 
    Data-cleaning
-   Embedding
+   Text-vectorization
    Feature-engineering
+   Embeddings
    ML-models
    Recommender-systems

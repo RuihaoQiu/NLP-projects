@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Data cleaning &mdash; algorithms  documentation</title>
+  <title>Data cleaning &mdash; Machine learning in NLP  documentation</title>
   
 
   
@@ -28,7 +28,7 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Embeddings" href="Embedding.html" />
+    <link rel="next" title="Text vectorization" href="Text-vectorization.html" />
     <link rel="prev" title="Machine learning in NLP" href="index.html" /> 
 
   
@@ -48,7 +48,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> algorithms
+            <a href="index.html" class="icon icon-home"> Machine learning in NLP
           
 
           
@@ -83,10 +83,12 @@
 <li class="toctree-l2"><a class="reference internal" href="#clean-text-with-regex">Clean text with regex</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#clean-text-with-nltk">Clean text with NLTK</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#text-cleaning-pipeline">Text cleaning pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#text-cleaning-module">Text cleaning module</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="Embedding.html">Embeddings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Text-vectorization.html">Text vectorization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Feature-engineering.html">Feature engineering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Embeddings.html">Embeddings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ML-models.html">Machine learning models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Recommender-systems.html">Recommender systems in NLP</a></li>
 </ul>
@@ -103,7 +105,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">algorithms</a>
+          <a href="index.html">Machine learning in NLP</a>
         
       </nav>
 
@@ -218,7 +220,8 @@
     <span class="n">text</span> <span class="o">=</span> <span class="n">punc_regex</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">text</span>
 
-<span class="n">clean_stopword_punct</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+<span class="n">clean_stopword</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+<span class="n">clean_punct</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>About Trie data structure, <a class="reference external" href="https://algonotes.readthedocs.io/en/latest/Trie.html">check my other post</a>.
@@ -266,6 +269,50 @@ The script Trie.py, which you can find <a class="reference external" href="https
 </pre></div>
 </div>
 </div>
+<div class="section" id="text-cleaning-module">
+<h2>Text cleaning module<a class="headerlink" href="#text-cleaning-module" title="Permalink to this headline">¶</a></h2>
+<p>Build a cleaning module based on the above contents.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">nltk.tokenize</span> <span class="k">import</span> <span class="n">word_tokenize</span>
+<span class="kn">from</span> <span class="nn">nltk.corpus</span> <span class="k">import</span> <span class="n">stopwords</span>
+
+<span class="kn">from</span> <span class="nn">Trie</span> <span class="k">import</span> <span class="n">make_regex</span>
+
+<span class="c1">## stop words and punctuations</span>
+<span class="n">stop_words</span> <span class="o">=</span> <span class="n">stopwords</span><span class="o">.</span><span class="n">words</span><span class="p">(</span><span class="s1">&#39;english&#39;</span><span class="p">)</span>
+
+<span class="c1">## regex</span>
+<span class="n">email_regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[\w.-]+@[\w.-]+&quot;</span><span class="p">)</span>
+<span class="n">url_regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(http|www)[^\s]+&quot;</span><span class="p">)</span>
+<span class="n">date_regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[\d]{2,4}[ -/:]*[\d]{2,4}([ -/:]*[\d]{2,4})?&quot;</span><span class="p">)</span> <span class="c1"># a way to match date</span>
+<span class="n">keep_word_regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[^A-Za-z ]+&quot;</span><span class="p">)</span>
+<span class="n">stop_regex</span> <span class="o">=</span> <span class="n">make_regex</span><span class="p">(</span><span class="n">stop_words</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">clean_special_patterns</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Remove special patterns - email, url, date etc.&quot;&quot;&quot;</span>
+    <span class="c1">## remove</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">url_regex</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">email_regex</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">date_regex</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">text</span>
+
+<span class="k">def</span> <span class="nf">clean_stopwords</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">stop_regex</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">text</span>
+
+<span class="k">def</span> <span class="nf">clean_keep_words</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">keep_word_regex</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">clean_text</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">clean_special_patterns</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">clean_stopwords</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">clean_keep_words</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="n">tokens</span> <span class="o">=</span> <span class="p">[</span><span class="n">word</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">word_tokenize</span><span class="p">(</span><span class="n">text</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="n">tokens</span>
+</pre></div>
+</div>
+<p>To be notice that, there is no universal text cleaning method. For some classification tasks, special characters might be good features, they should not be removed. For word2vec task, it is better not to stem the words and some stop words maybe important. For text generation, stop words might be also useful.</p>
+</div>
 </div>
 
 
@@ -276,7 +323,7 @@ The script Trie.py, which you can find <a class="reference external" href="https
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="Embedding.html" class="btn btn-neutral float-right" title="Embeddings" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="Text-vectorization.html" class="btn btn-neutral float-right" title="Text vectorization" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="index.html" class="btn btn-neutral" title="Machine learning in NLP" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
