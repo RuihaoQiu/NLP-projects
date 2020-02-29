@@ -1,5 +1,6 @@
 ## Data cleaning
 
+Load package and data
 ```
 import re
 import string
@@ -7,7 +8,8 @@ from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from nltk.stem.porter import PorterStemmer
 
-from Trie import Trie
+## customized package, see notebooks/Trie.py
+from Trie import Trie, make_regex
 
 ## input an text example - a job post
 filename = 'data/text_example.txt'
@@ -31,30 +33,21 @@ def clean_special_patterns(text):
     text = url_regex.sub("", text)
     text = email_regex.sub("", text)
     text = date_regex.sub("", text)
-    return text
+    return text.strip
 
 s = """Applications:
 www.aa.frdfaunefehofer.de/defe/referfefenzenefe/afeda-cenfeter.html
 http://www.ifefis.fe.com
 email: fowjfoj@fwjofj.djfow
 Kennziffer: IIS-2020-12-23
-Bewerbungsfrist:
-"""
-print(clean_special_patterns(s).strip)
+Bewerbungsfrist:"""
+
+clean_special_patterns(s)
 ```
 'Applications: \n\n\nemail: \nKennziffer: IIS-\nBewerbungsfrist:\n'
 
 **Remove stopwords and punctions**
 ```
-def make_regex(input_list):
-    """Build regex from trie structure.
-    """
-    t = Trie()
-    for w in input_list:
-        t.add(w)
-    regex = re.compile(r"\b" + t.pattern() + r"\b", re.IGNORECASE)
-    return regex
-
 def clean_stopwords(text):
     stop_regex = make_regex(stop_words)
     text = stop_regex.sub("", text)
@@ -68,8 +61,8 @@ def clean_punct(text):
 clean_stopword(text)
 clean_punct(text)
 ```
-About Trie data structure, [check my other post](https://algonotes.readthedocs.io/en/latest/Trie.html).
-The script Trie.py, which you can find [here](https://gist.github.com/EricDuminil/8faabc2f3de82b24e5a371b6dc0fd1e0).
+About Trie data structure, [check my other post](https://algonotes.readthedocs.io/en/latest/Trie.html).<br>
+The script Trie.py, which you can find in the `notebooks/` folder in my repo, and original code is [here](https://gist.github.com/EricDuminil/8faabc2f3de82b24e5a371b6dc0fd1e0).
 
 
 ### Clean text with NLTK
@@ -86,7 +79,6 @@ words = [word.lower() for word in tokens if word.isalpha()]
 stop_words = stopwords.words('english')
 words = [word for word in words if not word in stop_words]
 ```
-
 **Stemming**
 ```
 porter = PorterStemmer()
