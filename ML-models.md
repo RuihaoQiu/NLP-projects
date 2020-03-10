@@ -93,3 +93,62 @@ print("Training accuracy: {0:5.2f}%.\
 ```
 Training accuracy: 99.10%.<br>
 Testing accuracy: 95.23%.
+
+As you can see, it is easy to build models once we have prepared the data. We just need to spend some time on hyper-parameter tuning. More advanced model can largely increase the accuracy. The accuracy is very high now. Let's do further analysis.
+
+
+**Confusion matrix**
+One nice way to measure the model accuracy is confusion matrix. Here is the code the plot the heatmap.
+```
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.metrics import confusion_matrix
+
+labels = ["company", "tasks", "profile", "benefits"]
+y_pred_train = GBC.predict(X_train)
+y_pred_test = GBC.predict(X_test)
+cm_train = confusion_matrix(y_train, y_pred_train, labels=labels)
+cm_test = confusion_matrix(y_test, y_pred_test, labels=labels)
+
+def print_confusion_matrix(confusion_matrix, class_names, figsize = (10,7), fontsize=14, cmap=plt.cm.RdBu_r):
+    """Prints a confusion matrix as a heatmap.
+
+    Inputs
+    ---------
+    confusion_matrix: numpy.ndarray
+        The numpy.ndarray object returned from a call to sklearn.metrics.confusion_matrix.
+    class_names: list
+        An ordered list of class names, in the order they index the given confusion matrix.
+    figsize: tuple
+    fontsize: int
+        Font size for axes labels.
+
+    Outputs
+    -------
+    matplotlib.figure.Figure
+        The resulting confusion matrix figure
+    """
+    df_cm = pd.DataFrame(
+        confusion_matrix, index=class_names, columns=class_names,
+    )
+    fig = plt.figure(figsize=figsize)
+    try:
+        heatmap = sns.heatmap(df_cm, annot=True, fmt="d", cmap=cmap)
+    except ValueError:
+        raise ValueError("Confusion matrix values must be integers.")
+    heatmap.yaxis.set_ticklabels(heatmap.yaxis.get_ticklabels(), rotation=0, ha='right', fontsize=fontsize)
+    heatmap.xaxis.set_ticklabels(heatmap.xaxis.get_ticklabels(), rotation=45, ha='right', fontsize=fontsize)
+    plt.ylabel('True label', fontsize=fontsize)
+    plt.xlabel('Predicted label', fontsize=fontsize)
+```
+- Confusion matrix for training set
+```
+print_confusion_matrix(confusion_matrix=cm_train, class_names=labels)
+```
+![train](plots/confusion_matrix_heatmap_train.png)
+
+- Confusion matrix for testing set
+```
+print_confusion_matrix(confusion_matrix=cm_test, class_names=labels)
+```
+![test](plots/confusion_matrix_heatmap_test.png)
