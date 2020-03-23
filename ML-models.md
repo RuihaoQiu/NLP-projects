@@ -33,7 +33,9 @@ print(X_train.shape, X_test.shape)
 ```
 (2103, 63) (902, 63)
 
-### Tree-based models
+### Model selection
+Here I only focus on tree-based models.
+
 - Decision Tree
 ```
 from sklearn import tree
@@ -97,6 +99,7 @@ Testing accuracy: 95.23%.
 As you can see, it is easy to build models once we have prepared the data. We just need to spend some time on hyper-parameter tuning. More advanced model can largely increase the accuracy. The accuracy is very high now. Let's do further analysis.
 
 
+### Model evaluation
 **Confusion matrix**
 One nice way to measure the model accuracy is confusion matrix. Here is the code the plot the heatmap.
 ```
@@ -111,22 +114,21 @@ cm_train = confusion_matrix(y_train, y_pred_train, labels=labels)
 cm_test = confusion_matrix(y_test, y_pred_test, labels=labels)
 
 def print_confusion_matrix(confusion_matrix, class_names, figsize = (10,7), fontsize=14, cmap=plt.cm.RdBu_r):
-    """Prints a confusion matrix as a heatmap.
+    """Plot a confusion matrix as a heatmap.
 
     Inputs
     ---------
     confusion_matrix: numpy.ndarray
         The numpy.ndarray object returned from a call to sklearn.metrics.confusion_matrix.
     class_names: list
-        An ordered list of class names, in the order they index the given confusion matrix.
+        An ordered list of class names.
     figsize: tuple
     fontsize: int
-        Font size for axes labels.
 
     Outputs
     -------
     matplotlib.figure.Figure
-        The resulting confusion matrix figure
+        The resulting confusion matrix heatmap
     """
     df_cm = pd.DataFrame(
         confusion_matrix, index=class_names, columns=class_names,
