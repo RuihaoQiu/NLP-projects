@@ -259,4 +259,4 @@ plot_confusion_matrix(confusion_matrix=cm_test, class_names=labels)
 ```
 ![](plots/confusion_matrix_heatmap_test.png)
 
-I will discuss model evaluation in a separated chapter, since it is important to select the right measurement for a machine learning problem.
+We could use other measurements e.g. F-score, AUC curve, I might discuss in the future.
