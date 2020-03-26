@@ -202,12 +202,9 @@ def plot_history(df_history):
 
 plot_history(df_history)
 ```
-![performance](plots/performance.png)
-
-
+![](plots/performance.png)
 
 As you can see, it is easy to build models once we have prepared the data. We just need to spend some time on hyper-parameter tuning. More advanced model can largely increase the accuracy. The accuracy is very high now. Let's do further analysis.
-
 
 ### Model evaluation
 **Confusion matrix**<br>
@@ -223,22 +220,17 @@ y_pred_test = GBC.predict(X_test)
 cm_train = confusion_matrix(y_train, y_pred_train, labels=labels)
 cm_test = confusion_matrix(y_test, y_pred_test, labels=labels)
 
-def plot_confusion_matrix(confusion_matrix, class_names, figsize = (10,7), fontsize=14, cmap=plt.cm.RdBu_r):
+def plot_confusion_matrix(confusion_matrix, class_names, figsize=(10,7), fontsize=14):
     """Prints a confusion matrix as a heatmap.
 
-    Inputs
-    ---------
-    confusion_matrix: numpy.ndarray
-        The numpy.ndarray object returned from a call to sklearn.metrics.confusion_matrix.
-    class_names: list
-        An ordered list of class names, in the order they index the given confusion matrix.
-    figsize: tuple
-    fontsize: int
-        Font size for axes labels.
+    Args:
+        confusion_matrix (ndarray): The numpy.ndarray object returned from a call to sklearn.metrics.confusion_matrix.
+        class_names (list): An ordered list of class names, in the order they index the given confusion matrix.
+        figsize (tuple): image size
+        fontsize (int): Font size for axes labels.
 
-    Outputs
-    -------
-    matplotlib.figure.Figure
+    Returns:
+        matplotlib.figure.Figure
         The resulting confusion matrix figure
     """
     df_cm = pd.DataFrame(
@@ -259,12 +251,12 @@ def plot_confusion_matrix(confusion_matrix, class_names, figsize = (10,7), fonts
 ```
 plot_confusion_matrix(confusion_matrix=cm_train, class_names=labels)
 ```
-![train](plots/confusion_matrix_heatmap_train.png)
+![](plots/confusion_matrix_heatmap_train.png)
 
 - Confusion matrix for testing set
 ```
 plot_confusion_matrix(confusion_matrix=cm_test, class_names=labels)
 ```
-![test](plots/confusion_matrix_heatmap_test.png)
+![](plots/confusion_matrix_heatmap_test.png)
 
 I will discuss model evaluation in a separated chapter, since it is important to select the right measurement for a machine learning problem.
