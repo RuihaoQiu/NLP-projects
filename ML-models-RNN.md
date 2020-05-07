@@ -213,17 +213,101 @@ def predict(input_list):
     y_pred = model.predict_classes(data_padded, batch_size=None)
     return y_pred
 ```
+
+Customized sentence tokenizer
 ```
-input_list = [
-    "With a workforce numbering more than 600 in offices around the world, we have become a prominent player in the supply chain planning space. ",
-    "Our customers include many leading global companies, such as ArcelorMittal, BASF, Dow, L’Oréal, Michelin, Procter & Gamble, Shaw, Shell, Smurfit Kappa, and Yoplait.",
-    "A master’s degree in statistics or another quantitative discipline with a strong focus on statistics. ",
-    "A PhD is an advantage. Practical experience with predictive modeling and time series analysis and forecasting. ",
-    "Techniques like multivariate linear regression, exponential smoothing, ARIMA, etc. hold no secrets for you.",
-    "Conducting your own research and prototyping of forecasting algorithms in-line with OMP’s product vision and road map and in cooperation with other data scientists and product analysts.",
-    "Like a lot of companies, we offer a permanent position working on state-of-the-art software and delivering insightful advice in a growing international company with an attractive salary and other benefits. ",
-    "What sets us apart from other companies are our personal coaching and training packages.",
-]
-predict(input_list)
->>> array([0, 0, 2, 2, 2, 1, 0, 1])
+import os
+import re
+from nltk.data import load
+
+folder = "data/"
+tokenizer_file = "english.pickle"
+tokenizer_path = os.path.join(folder, tokenizer_file)
+tokenizer = load(tokenizer_path)
+
+split_regex = re.compile("(\n)+(?=([-#>*●•·–=\\ ]*[A-Z0-9]|[-#>*●•·–=\\ ]+[A-Z0-9]*))")
+newlines_regex = re.compile("(\n)+")
+url_regex = re.compile(r"\[[\s\S]*\]\([^)]*")
+eg_regex = re.compile(r"e\.g\.|i\.e\.|incl\.")  # e.g. cause wrong tokenized sentence.
+
+def sentence_tokenize(text):
+    """Split the full text into sentences."""
+    text = eg_regex.sub(" ", text)
+    sent_tokens = tokenizer.tokenize(text)
+    sent_list = []
+    for sent in sent_tokens:
+        sub_sent_tokens = split_regex.split(sent)
+        sub_sent_tokens = list(
+            map(lambda x: url_regex.sub(" ", x), sub_sent_tokens)
+        )
+        sub_sent_tokens = list(
+            filter(lambda x: len(x.split()) > 3, sub_sent_tokens)
+        )
+        sub_sent_tokens = list(
+            map(lambda x: newlines_regex.sub(" ", x), sub_sent_tokens)
+        )
+        sent_list += sub_sent_tokens
+    return sent_list
 ```
+
+An example of job description from [linkedin](https://www.linkedin.com/jobs/view/1851267491/?alternateChannel=search)
+```
+sample_text = """Leverage your statistical proficiency and business acumen to champion business innovation in a multi-faceted position. Be at the forefront of data transformation by bringing data science solutions to business functions. Join the Bayer Pharma ‘Data Science & Advanced Analytics’ team within the Division ‘Digital & Commercial Innovation’.
+
+We seek exceptional candidates with strong background in both: Data Science & Business. Successful candidates will demonstrate a high level of statistical knowledge, coupled with strong problem solving and communication skills.
+
+Your Tasks And Responsibilities
+Lead projects to provide business executives with analytical solutions to answer global pressing business challenges in various therapeutic areas
+Drive competitive advantage of Bayer in making better decisions through the solutions you develop
+End-to-end responsibility along the use case cycle: From exploration to model development and insight generation.
+Leverage internal and external resources, collaborate with other data scientists, data engineers and analysts to develop innovative solutions
+Partner with cross functional stakeholders including marketing, new product commercialization, real world evidence, market access, IT and business intelligence
+
+Who You Are
+Advanced degree in a quantitative field, PhD preferred
+Four years of experience related to progressive analytics, there of minimum one year in international (pharmaceutical) business or consulting
+Strong understanding of machine learning techniques and proficiency with statistical programming (e.g. R, Python)
+Experience in transformational leadership, business savvy
+Strong communication skills to build collaborative relationships in a diverse, cross-functional environment
+Leader and team-player to drive end-to-end implementation of use cases in a structured and time-conscious manner
+Business fluent in English, both written and spoken"""
+```
+```
+text_list = sentence_tokenize(sample_text)
+predict(text_list)
+
+# display as data frame
+pd.DataFrame({
+    "label": pred_label,
+    "content": text_list
+})
+```
+Result
+```
+  label	content
+0	2	Leverage your statistical proficiency and business acumen to champion business innovation in a multi-faceted position.
+1	0	Be at the forefront of data transformation by bringing data science solutions to business functions.
+2	0	Join the Bayer Pharma ‘Data Science & Advanced Analytics’ team within the Division ‘Digital & Commercial Innovation’.
+3	0	We seek exceptional candidates with strong background in both: Data Science & Business.
+4	2	Successful candidates will demonstrate a high level of statistical knowledge, coupled with strong problem solving and communication skills.
+5	1	Your Tasks And Responsibilities
+6	1	Lead projects to provide business executives with analytical solutions to answer global pressing business challenges in various therapeutic areas
+7	2	Drive competitive advantage of Bayer in making better decisions through the solutions you develop
+8	1	End-to-end responsibility along the use case cycle: From exploration to model development and insight generation.
+9	1	Leverage internal and external resources, collaborate with other data scientists, data engineers and analysts to develop innovative solutions
+10	1	Partner with cross functional stakeholders including marketing, new product commercialization, real world evidence, market access, IT and business intelligence
+11	2	Advanced degree in a quantitative field, PhD preferred
+12	2	Four years of experience related to progressive analytics, there of minimum one year in international (pharmaceutical) business or consulting
+13	2	Strong understanding of machine learning techniques and proficiency with statistical programming ( R, Python)
+14	2	Experience in transformational leadership, business savvy
+15	2	Strong communication skills to build collaborative relationships in a diverse, cross-functional environment
+16	1	Leader and team-player to drive end-to-end implementation of use cases in a structured and time-conscious manner
+17	2	Business fluent in English, both written and spoken
+
+```
+
+I would say the premier result is quite okay. Further improvements can be:
+- find more data, currently we just have small dataset.
+- add customized features, check the [feature engineering chapter](https://mlnlp.readthedocs.io/en/latest/Feature-engineering.html)
+- use more complex neural network architect, e.g. CNN + RNN, BERT.
+- use even more complex architect, neural networks + tree-based classifier.
