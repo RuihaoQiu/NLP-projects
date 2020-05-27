@@ -8,7 +8,7 @@ BERT (Bidirectional Encoder Representations from Transformers) is a state-of-the
 In this chapter, we will continue on text classification task as the previous chapters, to see how BERT can improve the performance.
 
 ### Codes
-Full code can be find in the `notebooks/bert_example.ipynb`. The notebook should run on TPU on Google Colab.
+Full code can be find in the `notebooks/BERT-classifier.ipynb`. The notebook should run on TPU on Google Colab.
 
 - Load pre-train model
 ```

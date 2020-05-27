@@ -13,3 +13,4 @@ This document contains the practical use cases in my daily NLP projects.
    ML-models-tree-based
    ML-models-Neural-Networks
    ML-models-RNN
+   ML-models-BERT
