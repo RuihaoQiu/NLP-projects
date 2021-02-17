@@ -10,38 +10,37 @@ This chapter, I am introducing the popular metrics for ML applications, as the f
 
 ### Classification
 
-**Confusion matrix**
+- Confusion matrix
+  - True positive(TP): predict positive, actual positive
+  - True negative(TN): predict negative, actual negative
+  - False positive(FP): predict positive, actual negative
+  - False negative(FN): predict negative, actual positive
 
-- True positive(TP): predict positive, actual positive
-- True negative(TN): predict negative, actual negative
-- False positive(FP): predict positive, actual negative
-- False negative(FN): predict negative, actual positive
+- **Accuracy** = (TP + TN) / (TP + TN + FP + FN)
 
-**Accuracy** = (TP + TN) / (TP + TN + FP + FN)
+- **Precision** = TP / (TP + FP)
 
-**Precision** = TP / (TP + FP)
+- **Recall (True positive rate)** = TP / (TP + FN)
 
-**Recall (True positive rate)** = TP / (TP + FN)
+- **False positive rate** = FP / (FP + TN)
 
-**False positive rate** = FP / (FP + TN)
+- **F1-score** = 2 * Precision * Recall / (Precision + Recall)
 
-**F1-score** = 2 * Precision * Recall / (Precision + Recall)
+- **ROC** : x - False positive rate, y - True positive rate, threshold - 0-1
 
-**ROC** : x - False positive rate, y - True positive rate, threshold - 0-1
-
-**AUC**: Area under ROC, 1 - good, 0 - bad.
+- **AUC**: Area under ROC, 1 - good, 0 - bad.
 
 
 
 ### Regression
 
-**MSE** = mean(sum((y - y_pred)^2))
+- **MSE** = mean((y - y_pred)^2)
 
-**MAE** = mean(sum(abs(y-y_pred)))
+- **MAE** = mean(abs(y-y_pred))
 
-**RSME** = sqrt(MSE)
+- **RSME** = sqrt(MSE)
 
-**R_squared** = 1 - SSR/SST = 1 - sum((y - y_pred)^2)/sum((y - y_avg)^2)
+- **R_squared** = 1 - SSR/SST = 1 - sum((y - y_pred)^2)/sum((y - y_avg)^2)
 
 
 
@@ -51,51 +50,51 @@ Learn to rank is to predict the rank (order) of relevant items for a given task.
 
 - **Mean reciprocal rank (MRR)**
 
-  Average of the reciprocal ranks of “the first relevant item” for a set of queries Q. **MRR** = mean(1/rank)
+  Average of the reciprocal ranks of “the first relevant item” for a set of queries Q. 
+
+  **MRR** = mean(1/rank)
 
 - **Precision @ k** :  
 
   Number of relevant items among the top k items. 
 
-  **P@k** = # relevant items / # top k items
+  - **P@k** = # relevant items / # top k items
 
-  **AP@N** = 1/n * sum(P@k)
+  - **AP@N** = 1/n * sum(P@k)
 
-  **mAP@N** =  mean(AP@N)
+  - **mAP@N** =  mean(AP@N)
 
-  Example:
+  **Example**:
 
-  ​	True items = {"a", "b", "c", "d", "e", "k"}
-
-  ​	Predict items = ["a", "f", "d", "e", "g"]
-
-  ​	hit items = [1, 0, 1, 1, 0]
-
-  ​	**AP@N** = 1/6 * (1/1 + 0/2 + 2/3 + 3/4 + 0/5)
+  ```
+  true_items = {"a", "b", "c", "d", "e", "k"}
+  predict_items = ["a", "f", "d", "e", "g"]
+  relevant_list = [1, 0, 1, 1, 0]
+  AP@N = 1/len(true_items) * (1/1 + 0/2 + 2/3 + 3/4 + 0/5)
+  or
+  AP@N = 1/sum(relevant) * (1/1 + 0/2 + 2/3 + 3/4 + 0/5)
+  ```
 
 -  **Normalized Discounted Cumulative Gain (NDCG)** 
 
-  **Cumulative Gain** :  Sum of all relevance values in a search result list, sum(rel_i)
+  - **Cumulative Gain** :  Sum of all relevance values in a search result list, sum(rel_i)
 
-  **Discounted Cumulative Gain** : sum(rel_i / log2(i+1))
+  - **Discounted Cumulative Gain** : sum(rel_i / log2(i+1))
 
-  Example:
+  **Example**:
 
-  ​	True items = ["a", "b", "c", "d", "e", "k"], relevant value = [6, 5, 4, 3, 2, 1]
+  ```
+  true_items = ["a", "b", "c", "d", "e", "k"]
+  relevant_scores = [6, 5, 4, 3, 2, 1]
+  predict_items = ["a", "f", "d", "e", "g"]
+  relevant_list = [6, 0, 3, 2, 0]
+  DCG = 6/1 + 0 + 3/2 + 2/2.32 + 0
+  ideal_relevant_list = [6, 3, 2, 0, 0]
+  IDCG = sum(6/1 + 3/1.59 + 2/2 + 0 + 0)
+  NDCG = DCG / IDCG
+  ```
 
-  ​	Predict items = ["a", "f", "d", "e", "g"]
-
-  ​	Relevant = [6, 0, 3, 2, 0]
-
-  ​	**DCG** = sum(6/1 + 0 + 3/2 + 2/2.32 + 0)
-
-  ​	Ideal_relevant = [6, 3, 2, 0, 0]
-
-  ​	**IDCG** = sum(6/1 + 3/1.59 + 2/2 + 0 + 0)
-
-  ​	**NDCG** = DCG / IDCG
-
-
+  
 
 **Reference**
 
