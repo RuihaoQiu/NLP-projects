@@ -2,9 +2,9 @@
 
 This chapter, I am introducing the popular metrics for ML applications, as the following -
 
-- Classification - Accuracy, confusion matrix, precision, recall, F1-score, ROC, AUC.
-- Regression - MSE, MAE, R squared
-- Recommender system (learn to rank) - AP, MAP@k
+- **Classification** - confusion matrix, accuracy, precision, recall, F1-score, ROC, AUC.
+- **Regression** - MSE, MAE, R squared.
+- **Recommender system (learn to rank)** - AP, mAP@k, nDCG.
 
 
 
@@ -50,9 +50,9 @@ Learn to rank is to predict the rank (order) of relevant items for a given task.
 
 - **Mean reciprocal rank (MRR)**
 
-  Average of the reciprocal ranks of “the first relevant item” for a set of queries Q. 
+  Average of the reciprocal ranks of “the first relevant item” for a set of queries. **MRR** = mean(1/rank).
 
-  **MRR** = mean(1/rank)
+  
 
 - **Precision @ k** :  
 
@@ -66,7 +66,7 @@ Learn to rank is to predict the rank (order) of relevant items for a given task.
 
   **Example**:
 
-  ```
+  ```markdown
   true_items = {"a", "b", "c", "d", "e", "k"}
   predict_items = ["a", "f", "d", "e", "g"]
   relevant_list = [1, 0, 1, 1, 0]
@@ -75,7 +75,9 @@ Learn to rank is to predict the rank (order) of relevant items for a given task.
   AP@N = 1/sum(relevant) * (1/1 + 0/2 + 2/3 + 3/4 + 0/5)
   ```
 
--  **Normalized Discounted Cumulative Gain (NDCG)** 
+
+
+-  **Normalized Discounted Cumulative Gain (NDCG)**
 
   - **Cumulative Gain** :  Sum of all relevance values in a search result list, sum(rel_i)
 
@@ -83,7 +85,7 @@ Learn to rank is to predict the rank (order) of relevant items for a given task.
 
   **Example**:
 
-  ```
+  ```markdown
   true_items = ["a", "b", "c", "d", "e", "k"]
   relevant_scores = [6, 5, 4, 3, 2, 1]
   predict_items = ["a", "f", "d", "e", "g"]
