@@ -57,7 +57,7 @@ Learn to rank is to predict the rank (order) of relevant items for a given task.
   relevant_list = [1, 0, 1, 1, 0]
   AP@N = 1/len(true_items) * (1/1 + 0/2 + 2/3 + 3/4 + 0/5)
   or
-  AP@N = 1/sum(relevant) * (1/1 + 0/2 + 2/3 + 3/4 + 0/5)
+  AP@N = 1/sum(relevant_list) * (1/1 + 0/2 + 2/3 + 3/4 + 0/5)
   ```
 
 
@@ -73,7 +73,7 @@ Learn to rank is to predict the rank (order) of relevant items for a given task.
     relevant_list = [6, 0, 3, 2, 0]
     DCG = 6/1 + 0 + 3/2 + 2/2.32 + 0
     ideal_relevant_list = [6, 3, 2, 0, 0]
-    IDCG = sum(6/1 + 3/1.59 + 2/2 + 0 + 0)
+    IDCG = 6/1 + 3/1.59 + 2/2 + 0 + 0
     NDCG = DCG / IDCG
     ```
 
