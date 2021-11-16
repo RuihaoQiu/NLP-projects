@@ -138,9 +138,9 @@ def count_ner(text):
             ner_counts[p] = 1
     return ner_counts
 ```
-From my testing, I find the Standford NER doesn't work quite well, many wrongly mappings and time consuming. But if it increase the model accuracy, why not use it. Feel free to use any tool e.g. customized NER, to create as many as features.
+From my testing, I find the Standford NER doesn't work quite well, many wrongly mappings and time consuming. But if it increase the model accuracy, why not use it. Feel free to use any tool e.g. customized NER, to create as many features as you want.
 
-There are other more sophisticated ways for feature engineering, for example using neural network or CNN, RNN. I will discuss them in other chapters.
+There are other more sophisticated ways for feature engineering, for example using neural network or CNN, RNN or even BERT. I will discuss them in other chapters.
 
 **Reference**
 - Dimension reduction - [https://thenewstack.io/3-new-techniques-for-data-dimensionality-reduction-in-machine-learning/](https://thenewstack.io/3-new-techniques-for-data-dimensionality-reduction-in-machine-learning/)

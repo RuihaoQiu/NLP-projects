@@ -10,5 +10,8 @@ This document contains the practical use cases in my daily NLP projects.
    Text-vectorization
    Feature-engineering
    Embeddings
-   ML-models
-   Recommender-systems
+   ML-models-tree-based
+   ML-models-Neural-Networks
+   ML-models-RNN
+   ML-models-BERT
+   ML-metrics

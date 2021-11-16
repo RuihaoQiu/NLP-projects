@@ -1,5 +1,9 @@
 ## Embeddings
+Embedding, also call vectorization or representation, is using a high demesional vector to represent the meaning of a work/document. The most important topic of modern NLP is how to create a proper representation of a word or text. Let's see the following examples.
 
+My previous section already discussed some ways to vectorized the documents. Here I would introduce the machine learning methods to make embeddings.
+
+### Word embedding
 Load packages and data
 ```
 import re
@@ -16,8 +20,6 @@ docs = df.Description
 len(docs)
 ```
 72292
-
-### Word embedding
 
 **Word2Vec**
 
@@ -58,7 +60,7 @@ powerbi : <br>
  [('obiee', 0.6827813982963562), ('tableau', 0.6598259210586548), ('visualization', 0.6336531639099121), ('query', 0.6239848136901855), ('iri', 0.6232795119285583)]<br>  
 excel : <br>
  [('ms', 0.666321873664856), ('powerpoint', 0.6542035341262817), ('macros', 0.6245964765548706), ('vlookups', 0.6167137622833252), ('microsoft', 0.6154444217681885)]<br>  
-git : <br> 
+git : <br>
  [('svn', 0.7295184135437012), ('weblogic', 0.6927921772003174), ('tomcat', 0.6880820989608765), ('subversion', 0.6861574053764343), ('jms', 0.6797549724578857)]
 
 
@@ -92,4 +94,6 @@ model.train(documents,
 
 **Reference**
 - Word2Vec explanation - [http://mccormickml.com/2016/04/19/word2vec-tutorial-the-skip-gram-model/](http://mccormickml.com/2016/04/19/word2vec-tutorial-the-skip-gram-model/)
+- Word2Vec paper - 1.[https://arxiv.org/pdf/1301.3781.pdf](https://arxiv.org/pdf/1301.3781.pdf), 2.[https://arxiv.org/pdf/1310.4546.pdf](https://arxiv.org/pdf/1310.4546.pdf) 
+- Doc2Vec paper - [https://arxiv.org/pdf/1405.4053v2.pdf](https://arxiv.org/pdf/1405.4053v2.pdf)
 - gensim - [https://radimrehurek.com/gensim/models/word2vec.html](https://radimrehurek.com/gensim/models/word2vec.html)
